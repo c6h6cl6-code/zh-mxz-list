@@ -17,6 +17,7 @@
 ! Everything after `!` and `#` is considered comments, empty lines are ignored
 !
 i,https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/test-include.txt
+i,https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/test-namespace.txt
 
 u,1,jian-yan-zhe-60,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝
 u,1,invalid-1145141919810,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝 ! This should also block 全自动代号盒帝
