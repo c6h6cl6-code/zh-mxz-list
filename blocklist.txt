@@ -1,0 +1,20 @@
+[ZHBL 1.0]
+! Title: MXZ Blocklist
+! Namespace: github.com/c6h6cl6-code/zh-mxz-list.git
+!
+! Format: 
+!  - Such line specifies a user to block: u,generation,url_token,user_id,user_name
+!  - Such line specifies an external blocklist: i,https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/blocklist.txt
+!
+! By default, url_token is used
+! If url_token is not valid, user_id is used to tack down the user
+! user_name is never used programmably
+!
+! User specify a "generation" number per namespace when executing the script
+! A blocklist or blocklist group should have a unique generation namespace
+! Every line with generation >= user provided generation should not be processed
+!
+! Everything after `!` and `#` is considered comments, empty lines are ignored
+!
+u,1,jian-yan-zhe-60,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝
+u,1,invalid-1145141919810,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝 ! This should also block 全自动代号盒帝
