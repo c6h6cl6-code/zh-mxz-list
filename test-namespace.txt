@@ -2,4 +2,4 @@
 ! Title: MXZ Blocklist (Test Include)
 ! Namespace: github.com/c6h6cl6-code/zh-mxz-list.git/test-namespace
 
-u,1,jian-yan-zhe-60,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝
+u,1,62-72-95-44-69,7b832b4bd38eadb65233929fa23e04e1,雨原
