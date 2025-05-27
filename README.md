@@ -19,11 +19,13 @@
 i,https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/test-include.txt
 ```
 
-这是一个**阻止列表条目**，包含代数（generation）、知乎用户的 `urlToken`、`id`和用户昵称：
+这是一个**阻止列表条目**，包含代数（generation）、知乎用户的 `urlToken`、`id` 和用户昵称：
 
 ```ZHBL
 u,0,jian-yan-zhe-60,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝
 ```
+
+虽然 `urlToken` 是阻止用户所需的全部信息，但仍然推荐加入 `id` 和用户昵称，前者可以处理用户修改 `urlToken` 的情况，后者方便维护。
 
 提示：你可以通过 `https://www.zhihu.com/people/<urlToken/id>` 访问这个知乎用户的主页。
 
