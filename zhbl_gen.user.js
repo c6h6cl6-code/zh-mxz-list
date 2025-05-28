@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name         ZHBL Rule Generator
 // @namespace    https://github.com/c6h6cl6-code/
-// @version      1.0
+// @version      1.1
+// @downloadURL  https://github.com/c6h6cl6-code/zh-mxz-list/raw/refs/heads/main/zhbl_gen.user.js
 // @description  Adds a button to extract Zhihu user ID and name
 // @author       C6H6Cl6
 // @match        https://www.zhihu.com/people/*
