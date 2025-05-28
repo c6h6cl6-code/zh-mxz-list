@@ -76,6 +76,8 @@ u,0,jian-yan-zhe-60,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝
 
 这是一个合法的**ZHBL 1.0**阻止列表**条目**。
 
+也可以安装用户脚本：`https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/zhbl_gen.user.js`
+
 ## 贡献
 
 你可以通过Issue或者Pull Request向本项目提交**MXZ**用户，建议将多个用户合并提交加快效率。目前不接受**外部阻止列表条目**的提交。
