@@ -1,5 +1,5 @@
 [ZHBL 1.0]
-! Title: MXZ Blocklist (Test Include)
+! Title: MXZ Blocklist (Test Namespace)
 ! Namespace: github.com/c6h6cl6-code/zh-mxz-list.git/test-namespace
 
 u,1,62-72-95-44-69,7b832b4bd38eadb65233929fa23e04e1,雨原
