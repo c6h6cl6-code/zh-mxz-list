@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name         Zhihu Blocklist Sync (ZHBL)
 // @namespace    https://github.com/c6h6cl6-code/
-// @version      1.2.0
-// @description  在知乎过滤设置页一键同步 ZHBL 黑名单（namespace→generation 本地保存，账号隔离）
+// @version      1.2.2
+// @downloadURL  https://github.com/c6h6cl6-code/zh-mxz-list/raw/refs/heads/main/zhbl.user.js
+// @description  在知乎过滤设置页一键同步 ZHBL 黑名单
 // @author       C6H6Cl6
 // @match        https://www.zhihu.com/settings/filter*
 // @grant        none
@@ -48,7 +49,7 @@
   async function runSync() {
 
     /* === 1. 初始化与持久化 === */
-    const account      = getCurrentUserToken();                    // ← 现在才读取
+    const account      = getCurrentUserToken();
     const LS_MAP_KEY   = `zhbl_ns_map_${account}`;
 
     let NS_GEN = {};
@@ -106,6 +107,8 @@
     async function parseList(url) {
       if (seen.has(url)) return;
       seen.add(url);
+
+      console.log(`[ZHBL] 读取列表: ${url}`);
 
       let text;
       try { text = await (await fetch(url)).text(); }
@@ -198,7 +201,7 @@
 
     /* === 7. 合并代数 & 保存 === */
     for (const [ns, gen] of Object.entries(NS_MAX)) {
-      NS_GEN[ns] = Math.max(NS_GEN[ns] || 0, gen);      // 只升不降
+      NS_GEN[ns] = Math.max(NS_GEN[ns] || 0, gen);
     }
     saveMap();
 
@@ -206,7 +209,7 @@
       .map(([ns, g]) => `${ns}: ${Math.max(1, g)}`)
       .join('\n');
     console.log('╭─ 各 Namespace 最高代数统计 ─\n' + statsText + '\n╰────────────────────────');
-    alert('ZHBL 同步完成！\n\n' + statsText);
+    alert(`ZHBL 同步完成！\n\n共处理 ${queue.length} 行。\n\n各 Namespace 最高代数统计：\n${statsText}`);
   }
 
   /* ────────────── 注入按钮 ────────────── */
