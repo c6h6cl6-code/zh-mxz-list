@@ -1,11 +1,11 @@
 // ==UserScript==
 // @name         Zhihu Blocklist Sync (ZHBL)
 // @namespace    https://github.com/c6h6cl6-code/
-// @version      1.2.2
+// @version      1.2.3
 // @downloadURL  https://github.com/c6h6cl6-code/zh-mxz-list/raw/refs/heads/main/zhbl.user.js
 // @description  在知乎过滤设置页一键同步 ZHBL 黑名单
 // @author       C6H6Cl6
-// @match        https://www.zhihu.com/settings/filter*
+// @match        https://www.zhihu.com/settings/*
 // @grant        none
 // @connect      raw.githubusercontent.com
 // @connect      zhihu.com
@@ -25,25 +25,45 @@
   }
 
   /* ────────────── UI ────────────── */
-  function insertButton() {
+  function setup() {
+    processButton();
+    window.history.pushState = new Proxy(window.history.pushState, {
+      apply: (target, thisArg, argArray) => {
+        const ret = target.apply(thisArg, argArray);
+        processButton();
+        return ret;
+      },
+    });
+  }
+
+  function processButton() {
     const host = document.body;
     if (!host) return;
 
-    const btn = document.createElement('button');
-    btn.textContent = '同步黑名单（ZHBL）';
-    btn.style.position = 'fixed';
-    btn.style.top = '20px';
-    btn.style.right = '20px';
-    btn.style.zIndex = '9999';
-    btn.style.padding = '8px 12px';
-    btn.style.backgroundColor = '#0084FF';
-    btn.style.color = '#fff';
-    btn.style.border = 'none';
-    btn.style.borderRadius = '4px';
-    btn.style.cursor = 'pointer';
-    btn.onclick = runSync;
-    host.appendChild(btn);
+    if (location.pathname == '/settings/filter') {
+      const btn = document.createElement('button');
+      btn.id = 'zhbl_btn';
+      btn.textContent = '同步黑名单（ZHBL）';
+      btn.style.position = 'fixed';
+      btn.style.top = '20px';
+      btn.style.right = '20px';
+      btn.style.zIndex = '9999';
+      btn.style.padding = '8px 12px';
+      btn.style.backgroundColor = '#0084FF';
+      btn.style.color = '#fff';
+      btn.style.border = 'none';
+      btn.style.borderRadius = '4px';
+      btn.style.cursor = 'pointer';
+      btn.onclick = runSync;
+      host.appendChild(btn);
+    } else {
+      const old = document.getElementById('zhbl_btn');
+      console.log(old)
+      if (old) old.parentElement.removeChild(old);
+    }
   }
+
+
 
   /* ────────────── 主流程 ────────────── */
   async function runSync() {
@@ -214,8 +234,8 @@
 
   /* ────────────── 注入按钮 ────────────── */
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', insertButton);
+    document.addEventListener('DOMContentLoaded', setup);
   } else {
-    insertButton();
+    setup();
   }
 })();
