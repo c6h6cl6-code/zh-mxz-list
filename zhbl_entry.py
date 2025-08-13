@@ -1,4 +1,4 @@
-import os
+import os, sys
 import re
 
 def parse_blocklist(file_path):
@@ -51,18 +51,35 @@ def process_user_file(input_path, generation, user_ids, target_path):
     print(f"Imported {added} new user(s) from: {input_path}")
 
 if __name__ == "__main__":
-    file_path = input("Enter path to blocklist file: ").strip()
+    if len(sys.argv) > 1:
+        file_path = sys.argv[1]
+    else:
+        file_path = input("Enter path to blocklist file: ").strip()
     if not os.path.exists(file_path):
         print("Target blocklist file not found")
         exit(1)
+
+    user_ids = parse_blocklist(file_path)
+    print(f"Loaded {len(user_ids)} user(s) from: {file_path} (target)")
+    if len(sys.argv) > 2:
+        for input_file in sys.argv[2:]:
+            if os.path.isfile(input_file):
+                try:
+                    new_user_ids = parse_blocklist(input_file)
+                    user_ids.update(new_user_ids)
+                    print(f"Loaded {len(new_user_ids)} user(s) from: {input_file}")
+                except Exception as e:
+                    print(f"Failed to load from file {input_file}: {e}")
+            else:
+                print(f"File not found: {input_file}")
+
+    print(f"Total unique user(s) loaded: {len(user_ids)}")
 
     try:
         generation = int(input("Enter your generation number: ").strip())
     except ValueError:
         print("Invalid generation number")
         exit(1)
-
-    user_ids = parse_blocklist(file_path)
 
     try:
         while True:
