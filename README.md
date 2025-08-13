@@ -1,5 +1,9 @@
 # zh-mxz-list
 
+## TL;DR (我只想屏蔽MXZ，怎么办？)
+
+确保浏览器安装了**用户脚本管理器**，点击[这里](https://github.com/c6h6cl6-code/zh-mxz-list/raw/refs/heads/main/zhbl.user.js)安装用户脚本，导航到[知乎的屏蔽页面](https://www.zhihu.com/settings/filter)后点击**同步黑名单**（没有看到按钮的可以尝试刷新）。在所有弹出的4个对话框中直接选择OK就会自动开始屏蔽，操作完成后会弹出对话框提示，在此之前不要离开页面，可以打开浏览器控制台查看进度。屏蔽的进度自动保存在本地浏览器，如果有多个设备或者浏览器，可以只在一台设备上使用。
+
 ## ZHBL 1.0
 
 一个**ZHBL 1.0**阻止列表**文件**由以下内容组成。
@@ -76,7 +80,7 @@ u,0,jian-yan-zhe-60,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝
 
 这是一个合法的**ZHBL 1.0**阻止列表**条目**。
 
-也可以安装用户脚本：`https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/zhbl_gen.user.js`
+也可以[安装](https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/zhbl_gen.user.js)用于生成ZHBL条目的用户脚本：`https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/zhbl_gen.user.js`
 
 ## 贡献
 
