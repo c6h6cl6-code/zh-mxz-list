@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Zhihu Blocklist Sync (ZHBL)
 // @namespace    https://github.com/c6h6cl6-code/
-// @version      1.2.2
+// @version      1.2.3
 // @downloadURL  https://github.com/c6h6cl6-code/zh-mxz-list/raw/refs/heads/main/zhbl.user.js
 // @description  在知乎过滤设置页一键同步 ZHBL 黑名单
 // @author       C6H6Cl6
