@@ -3,4 +3,3 @@
 ! Namespace: github.com/c6h6cl6-code/zh-mxz-list.git
 
 u,2,86-79-54-19-83,f68a961e45301b0101a1bc5a1592b7e5,社会达利园主义
-u,2,qiang-huo-zhi-ge-94,3af6824bab99da6d2ea51ab004e54575,水银灯
