@@ -1,5 +1,14 @@
-import os, sys
+import os
+import sys
 import re
+import socket
+import threading
+import time
+
+LISTEN = '0.0.0.0'
+UDP_PORT = 7246
+
+INPUT_PROMPT = 'ZHBL> '
 
 def parse_blocklist(file_path):
     user_ids = set()
@@ -23,18 +32,25 @@ def parse_blocklist(file_path):
                     continue
     return user_ids, highest_generation
 
+def is_valid_url_token(s):
+    return s.replace('-', '').isalnum()
+
 def normalize_user_line(user_input, generation):
-    user_input = re.sub(r'!.*$', '', user_input).strip()
+    user_input = re.sub(r'!.*$', '', user_input).strip().replace('\r', '').replace('\n', '')
     if user_input.startswith('u,'):
         parts = user_input.split(',')
         if len(parts) < 5:
             raise ValueError("Invalid full-format user entry")
+        if not is_valid_url_token(parts[2]):
+            raise ValueError("Invalid urlToken")
         parts[1] = str(generation)
         return ','.join(parts), parts[3]
     else:
         parts = user_input.split(',')
         if len(parts) < 3:
             raise ValueError("Invalid short-format user entry")
+        if not is_valid_url_token(parts[0]):
+            raise ValueError("Invalid urlToken")
         return f"u,{generation},{parts[0]},{parts[1]},{parts[2]}", parts[1]
 
 def process_user_file(input_path, generation, user_ids, target_path):
@@ -57,6 +73,47 @@ def process_user_file(input_path, generation, user_ids, target_path):
             added += 1
     print(f"Imported {added} new user(s) from: {input_path}")
 
+def udp_server(file_path, user_ids, generation, stop_event):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.bind((LISTEN, UDP_PORT))
+    print(f"UDP server started on {LISTEN}:{UDP_PORT}")
+    while not stop_event.is_set():
+        try:
+            sock.settimeout(1.0)
+            data, addr = sock.recvfrom(1024)
+            line = data.decode('utf-8').strip()
+            message = ''
+            print(f"\nReceived from {addr}: {line}")
+            try:
+                print(INPUT_PROMPT + line)
+                normalized_line, user_id = normalize_user_line(line, generation)
+                if user_id in user_ids:
+                    message = f"Duplicate user ID from UDP {addr}: {user_id}. Skipped."
+                else:
+                    with open(file_path, 'a', encoding='utf-8') as f:
+                        f.write(normalized_line + '\n')
+                    user_ids.add(user_id)
+                    message = f"Added from UDP {addr}: {normalized_line}"
+            except ValueError as e:
+                message = f"Error processing line from UDP {addr}: {e}"
+            except Exception as e:
+                message = f"Unexpected error processing from UDP {addr}: {e}"
+            finally:
+                if message:
+                    print(message)
+                    sock.sendto(message.encode('utf-8'), (addr[0], UDP_PORT))
+                else:
+                    print("Warning: WTF?")
+        except socket.timeout:
+            continue
+        except Exception as e:
+            print(f"UDP server error: {e}")
+        
+        print(INPUT_PROMPT, end='', flush=True)
+
+    sock.close()
+    print("UDP server stopped")
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         file_path = sys.argv[1]
@@ -65,7 +122,6 @@ if __name__ == "__main__":
     if not os.path.exists(file_path):
         print("Target blocklist file not found")
         exit(1)
-
     user_ids, highest_generation = (set(), 0)
     files = [file_path]
     if len(sys.argv) > 1:
@@ -74,8 +130,6 @@ if __name__ == "__main__":
                 files.append(input_file)
             else:
                 print(f"File not found: {input_file}")
-
-
     for input_file in files:
         try:
             new_user_ids, new_highest_generation = parse_blocklist(input_file)
@@ -85,10 +139,8 @@ if __name__ == "__main__":
             print(f"Loaded {len(new_user_ids)} user(s) from: {input_file} with highest generation {new_highest_generation}")
         except Exception as e:
             print(f"Failed to load from file {input_file}: {e}")
-
     print(f"Total unique user(s) loaded: {len(user_ids)}")
     print(f"Highest generation number found: {highest_generation}")
-
     try:
         generation = int(input(f"Enter generation number (default {highest_generation + 1}): ").strip() or highest_generation + 1)
         if generation <= highest_generation:
@@ -99,25 +151,31 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nInterrupted.")
         exit(1)
+    
+    # Start UDP server in a separate thread
+    stop_event = threading.Event()
+    udp_thread = threading.Thread(target=udp_server, args=(file_path, user_ids, generation, stop_event))
+    udp_thread.daemon = True
+    udp_thread.start()
+
+    # sleep 0.1s
+    time.sleep(0.1)
 
     try:
         while True:
             try:
-                user_input = input("Enter user rule or file path (Ctrl+D/Ctrl+Z to quit): ").strip()
+                user_input = input(INPUT_PROMPT).strip()
             except EOFError:
                 print("\nExiting.")
                 break
-
             if not user_input:
                 continue
-
             if os.path.isfile(user_input):
                 try:
                     process_user_file(user_input, generation, user_ids, file_path)
                 except Exception as e:
                     print(f"Failed to import from file: {e}")
                 continue
-
             try:
                 line, user_id = normalize_user_line(user_input, generation)
                 if user_id in user_ids:
@@ -134,3 +192,5 @@ if __name__ == "__main__":
                     print(f"Error: {e}")
     except KeyboardInterrupt:
         print("\nInterrupted.")
+        stop_event.set()  # Signal UDP server to stop
+        udp_thread.join(timeout=2.0)  # Wait for UDP thread to close
