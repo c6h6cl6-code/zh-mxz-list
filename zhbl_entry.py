@@ -3,18 +3,25 @@ import re
 
 def parse_blocklist(file_path):
     user_ids = set()
+    highest_generation = 0
     with open(file_path, 'r', encoding='utf-8') as f:
         for line in f:
             line = re.sub(r'!.*$', '', line).strip()
             if not line or not line.startswith('u,'):
                 continue
             parts = line.split(',')
-            if len(parts) >= 4:
+            if len(parts) >= 4 and line.startswith('u,'):
                 try:
                     user_ids.add(parts[3])
+                    generation = int(parts[1])
+                    if generation > highest_generation:
+                        highest_generation = generation
+                except ValueError:
+                    print(f"Invalid ZHBL entry: {line}")
+                    continue
                 except Exception:
                     continue
-    return user_ids
+    return user_ids, highest_generation
 
 def normalize_user_line(user_input, generation):
     user_input = re.sub(r'!.*$', '', user_input).strip()
@@ -59,26 +66,38 @@ if __name__ == "__main__":
         print("Target blocklist file not found")
         exit(1)
 
-    user_ids = parse_blocklist(file_path)
-    print(f"Loaded {len(user_ids)} user(s) from: {file_path} (target)")
-    if len(sys.argv) > 2:
+    user_ids, highest_generation = (set(), 0)
+    files = [file_path]
+    if len(sys.argv) > 1:
         for input_file in sys.argv[2:]:
             if os.path.isfile(input_file):
-                try:
-                    new_user_ids = parse_blocklist(input_file)
-                    user_ids.update(new_user_ids)
-                    print(f"Loaded {len(new_user_ids)} user(s) from: {input_file}")
-                except Exception as e:
-                    print(f"Failed to load from file {input_file}: {e}")
+                files.append(input_file)
             else:
                 print(f"File not found: {input_file}")
 
+
+    for input_file in files:
+        try:
+            new_user_ids, new_highest_generation = parse_blocklist(input_file)
+            user_ids.update(new_user_ids)
+            if new_highest_generation > highest_generation:
+                highest_generation = new_highest_generation
+            print(f"Loaded {len(new_user_ids)} user(s) from: {input_file} with highest generation {new_highest_generation}")
+        except Exception as e:
+            print(f"Failed to load from file {input_file}: {e}")
+
     print(f"Total unique user(s) loaded: {len(user_ids)}")
+    print(f"Highest generation number found: {highest_generation}")
 
     try:
-        generation = int(input("Enter your generation number: ").strip())
+        generation = int(input(f"Enter generation number (default {highest_generation + 1}): ").strip() or highest_generation + 1)
+        if generation <= highest_generation:
+            print(f"Warning: Generation number {generation} is not greater than the highest generation {highest_generation}.")
     except ValueError:
         print("Invalid generation number")
+        exit(1)
+    except KeyboardInterrupt:
+        print("\nInterrupted.")
         exit(1)
 
     try:
