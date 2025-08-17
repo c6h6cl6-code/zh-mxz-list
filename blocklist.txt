@@ -22,7 +22,6 @@ i,https://raw.githubusercontent.com/c6h6cl6-code/zh-mxz-list/refs/heads/main/tes
 u,1,jian-yan-zhe-60,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝
 u,1,invalid-1145141919810,02825cb8023c91115428cf772f2aea2b,全自动代号盒帝 ! This should also block 全自动代号盒帝
 u,1,86-79-54-19-83,f68a961e45301b0101a1bc5a1592b7e5,社会达利园主义
-u,1,qiang-huo-zhi-ge-94,3af6824bab99da6d2ea51ab004e54575,水银灯
 u,2,yue-ye-tu-xiao-xian-nu,12b8429db043a3cba457dcbb90f54735,羽生结弦老婆
 u,2,weiba-wo,7ae4196ffcea1159d4419154b3817a7f,尾巴
 u,2,kdksn,a234ecee2f3f985b8d90b8437f8af260,ViiV
